@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>Minecraft Skin Pack Maker | Create Bedrock & PE Skin Packs Online</title>
-    
-    <meta name="description" content="Free online Minecraft Skin Pack Maker for Bedrock (PE). Create custom .mcpack files, import PNG skins, 3D preview, and download instantly. No installation needed.">
-    
-    <meta name="keywords" content="minecraft skin pack maker, mcpe skin pack, bedrock skin creator, mcpack generator, minecraft pe skins, custom skin pack, 3d skin preview">
+    <title>Minecraft Skin Pack Maker | Online Bedrock & PE Tool</title>
+    <meta name="description" content="Free online Minecraft Skin Pack Maker for Bedrock Edition (PE). Create custom .mcpack files, import PNG skins, and support slim models. No installation required.">
+    <meta name="keywords" content="minecraft skin pack maker, mcpe skin creator, bedrock edition, mcpack generator, minecraft pe skins, custom skin pack, 3d skin preview">
     
     <meta property="og:title" content="Minecraft Skin Pack Studio">
-    <meta property="og:description" content="The easiest way to create custom skin packs for Minecraft Bedrock & PE.">
+    <meta property="og:description" content="Create your own Minecraft Bedrock skin packs easily.">
     <meta property="og:url" content="https://steverider7719.github.io/skinpackmaker/">
     <meta property="og:type" content="website">
 
@@ -31,6 +29,7 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
+        /* 글꼴 유지 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--app-bg);
@@ -41,10 +40,8 @@
             position: relative;
         }
 
-        /* [SEO Hidden Text] - Not visible to users, but visible to bots */
-        .seo-hidden {
-            display: none;
-        }
+        /* [SEO] Hidden text for search engines */
+        .seo-hidden { display: none; }
 
         .input-error {
             border: 2px solid var(--danger) !important;
@@ -95,8 +92,15 @@
             transition: background 0.2s; height: 180px; justify-content: center;
         }
         .skin-card:active { background: var(--app-gray); }
-        .skin-card-name { font-size: 12px; font-weight: 700; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; margin-top: 10px; }
-        .order-tag { font-size: 9px; color: var(--app-green); font-weight: 800; margin-bottom: 8px; letter-spacing: 1px; }
+        
+        /* [삭제됨] skin-card-name 스타일 삭제 */
+        /* .skin-card-name { font-size: 12px; font-weight: 700; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; margin-top: 10px; } */
+        
+        /* Style for dynamic name tag (handles long text) */
+        .order-tag { 
+            font-size: 9px; color: var(--app-green); font-weight: 800; margin-bottom: 8px; letter-spacing: 0;
+            max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
 
         .preview-row {
             display: flex; gap: 8px; justify-content: center;
@@ -267,7 +271,7 @@
     </div>
 
     <div id="startScreen" class="screen active" style="justify-content:center; align-items:center; background:#111; color:white;">
-        <h1 style="font-size:24px; font-weight:900; letter-spacing:4px; margin-bottom:40px; text-transform: uppercase;">SKINPACK STUDIO</h1>
+        <div style="font-size:24px; font-weight:900; letter-spacing:4px; margin-bottom:40px; text-transform: uppercase;">SKINPACK STUDIO</div>
         <button class="btn-green" style="padding:18px 48px;" onclick="openWizard()">NEW PROJECT</button>
     </div>
 
@@ -482,14 +486,14 @@
             const grid = document.getElementById('skinGrid');
             grid.innerHTML = ''; 
             skins.forEach((s, i) => {
+                // [수정됨] 하단 텍스트 div 제거됨
                 grid.innerHTML += `
                 <div class="skin-card" onclick="openSkinSettings(${i})">
-                    <div class="order-tag">ITEM ${i+1}</div>
+                    <div class="order-tag">${s.displayName}</div>
                     <div class="preview-row">
                         <canvas id="preview_f_${i}" width="16" height="32" class="skin-canvas"></canvas>
                         <canvas id="preview_b_${i}" width="16" height="32" class="skin-canvas"></canvas>
                     </div>
-                    <div class="skin-card-name">${s.displayName}</div>
                 </div>`;
             });
             skins.forEach((s, i) => updateSkinCanvas(i));
@@ -611,7 +615,17 @@
             skins[skinIndex].animations[animIndex][field] = val;
         }
 
-        function handleDisplayNameChange(val, i) { skins[i].displayName = val; const card = document.querySelectorAll('.skin-card-name')[i]; if(card) card.innerText = val; }
+        function handleDisplayNameChange(val, i) { 
+            skins[i].displayName = val; 
+            // [수정됨] 하단 텍스트 업데이트 로직 제거
+            // const card = document.querySelectorAll('.skin-card-name')[i]; 
+            // if(card) card.innerText = val; 
+            
+            // 상단 초록색 태그 업데이트는 유지
+            const tag = document.querySelectorAll('.order-tag')[i];
+            if(tag) tag.innerText = val;
+        }
+
         function handleLocIdChange(input, i) { validateMandatory(input); skins[i].localization_name = input.value; }
         
         function handleTypeChange(val, i, btnElement) { 
